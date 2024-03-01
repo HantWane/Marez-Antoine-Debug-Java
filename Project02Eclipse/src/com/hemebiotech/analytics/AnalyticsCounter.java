@@ -1,76 +1,74 @@
-
-
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+// classe représentant un compteur d'analyse des symptoms
 public class AnalyticsCounter {
-	private static int headacheCount = 0;	// initialize to 0
-	private static int rashCount = 0;		// initialize to 0
-	private static int pupilCount = 0;		// initialize to 0
-	
-	public static void main(String args[]) throws Exception {
-		// first get input
-		String Directory = System.getProperty("user.dir");
-		System.out.println(Directory);
-		BufferedReader reader = new BufferedReader (new FileReader("Data/symptoms.txt"));
-		/* 
-		String line = reader.readLine();
+    private final ISymptomReader reader;
+    private final ISymptomWriter writer;
 
-		int i = 0;	
-		int headCount = 0;	// counts headaches
-		while (line != null) {
-			i++;	// increment i
-			System.out.println("symptom from file: " + line);
-			if (line.equals("headache")) {
-				headCount++;
-				System.out.println("number of headaches: " + headCount);
-			}
-			else if (line.equals("rash")) {
-				rashCount++;
-			}
-			else if (line.contains("pupils")) {
-				pupilCount++;
-			}
+	/**
+     * Constructeur de la classe AnalyticsCounter.
+     * @param reader Objet responsable de la lecture des symptômes.
+     * @param writer Objet responsable de l'écriture des symptômes.
+     */
+    public AnalyticsCounter(ISymptomReader reader, ISymptomWriter writer) {
+        this.reader = reader;
+        this.writer = writer;
+    }
 
-			line = reader.readLine();	// get another symptom
-		}
-		*/
-		List<String> symptoms = new ArrayList<String>();
-		symptoms.add("cough");
-		symptoms.add("covid");
-		symptoms.add("covid");
-		Map<String, Integer> MapSymptomsCount = countSymptoms(symptoms);
+	// méthode pour exécuter l'analyse des symptoms
+    public void runAnalysis() throws IOException {
+        List<String> symptoms = getSymptoms();
+        Map<String, Integer> symptomCounts = countSymptoms(symptoms);
+        Map<String, Integer> sortedSymptoms = sortSymptoms(symptomCounts);
+        writeSymptoms(sortedSymptoms);
+    }
 
-		System.out.println(MapSymptomsCount);
-		
-		// next generate output
-		FileWriter writer = new FileWriter ("result.out");
-		writer.write("headache: " + headacheCount + "\n");
-		writer.write("rash: " + rashCount + "\n");
-		writer.write("dialated pupils: " + pupilCount + "\n");
-		writer.close();
-	}
-	private static Map<String, Integer> countSymptoms(List<String> symptoms) {
-        Map<String, Integer> symptomCounts = new HashMap<>();
+	// méthode pour obtenir la liste des symptoms
+    public List<String> getSymptoms() throws IOException {
+        return reader.readSymptoms();
+    }
 
-        // Parcourir tous les symptômes de la liste
+	        //  méthode pour compter les symptômes
+    public Map<String, Integer> countSymptoms(List<String> symptoms) {
+		Map<String, Integer> symptomCounts = new HashMap<>();
+        
         for (String symptom : symptoms) {
-            // Vérifier si le symptôme est déjà présent dans la map
-            if (symptomCounts.containsKey(symptom)) {
-                // Si oui, incrémenter le compteur existant
-                int count = symptomCounts.get(symptom);
-                symptomCounts.put(symptom, count + 1);
-            } else {
-                // Si non, ajouter le symptôme à la map avec un compteur initialisé à 1
-                symptomCounts.put(symptom, 1);
-            }
+            symptomCounts.put(symptom, symptomCounts.getOrDefault(symptom, 0) + 1);
         }
+		return symptomCounts;
+    }
 
-        return symptomCounts;
+	        //  méthode pour trier les symptômes par ordre alphabétique
+    public Map<String, Integer> sortSymptoms(Map<String, Integer> symptoms) {
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(symptoms.entrySet());
+        Collections.sort(list, Comparator.comparing(Map.Entry::getKey));
+        Map<String, Integer> sortedSymptoms = new LinkedHashMap<>();
+        for (Map.Entry<String, Integer> entry : list) {
+            sortedSymptoms.put(entry.getKey(), entry.getValue());
+        }
+        return sortedSymptoms;
+    }
+
+	// méthode pour écrire les symptoms dans un fichier
+    public void writeSymptoms(Map<String, Integer> symptoms) {
+        writer.writeSymptoms(symptoms);
+    }
+
+	// méthode principale pour exécuter le programme d'analyse des symptoms
+    public static void main(String[] args) throws IOException {
+        ISymptomReader reader = new ReadSymptomsDataFromFile("C:\\Users\\marke\\OpenClassrooms\\Projet_4\\Data\\symptoms.txt");
+        ISymptomWriter writer = new WriteSymptomsDataToFile("result.out"); 
+
+        AnalyticsCounter counter = new AnalyticsCounter(reader, writer);
+        counter.runAnalysis();
     }
 }

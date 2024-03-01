@@ -1,14 +1,12 @@
-
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
-public class WriteSymptomDataToFile implements ISymptomWriter {
-
+// méthode pour écrire les symptoms dans le document final 
+public class WriteSymptomsDataToFile implements ISymptomWriter {
     private String filepath;
 
-    public WriteSymptomDataToFile(String filepath) {
+    public WriteSymptomsDataToFile(String filepath) {
         this.filepath = filepath;
     }
 
@@ -19,8 +17,7 @@ public class WriteSymptomDataToFile implements ISymptomWriter {
                 writer.write(entry.getKey() + ": " + entry.getValue() + "\n");
             }
         } catch (IOException e) {
-            System.err.println("Erreur lors de l'écriture des symptômes dans le fichier.");
-            e.printStackTrace();
+            System.err.println("Error writing symptoms to file: " + e.getMessage());
         }
     }
 }
