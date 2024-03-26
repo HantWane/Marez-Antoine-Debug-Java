@@ -36,4 +36,19 @@ public class ReadSymptomsDataFromFile implements ISymptomReader {
         }
         return symptoms;
     }
+
+    @Override
+    public List<String> readCsvSymptoms(char delimiter) throws IOException {
+        List<String> symptoms = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(String.valueOf(delimiter));
+                for (String part : parts) {
+                    symptoms.add(part.trim()); // Ajoutez chaque symptôme après avoir supprimé les espaces en excès
+                }
+            }
+        }
+        return symptoms;
+    }
 }

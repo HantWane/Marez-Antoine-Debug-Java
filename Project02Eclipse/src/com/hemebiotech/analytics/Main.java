@@ -12,7 +12,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // Creating the ISymptomReader object
-        ISymptomReader reader = new ReadSymptomsDataFromFile("symptoms.txt");
+        ISymptomReader reader = new ReadSymptomsDataFromFile("symptoms.csv");
 
         // Creating the ISymptomWriter object
         ISymptomWriter writer = new WriteSymptomsDataToFile("result.out");
@@ -25,7 +25,6 @@ public class Main {
             Map<String, Integer> sortedSymptoms = counter.runAnalysis();
 
             // Using the sortedSymptoms method
-            System.out.println("Sorted Symptoms: " + sortedSymptoms);
         } catch (Exception e) {
             System.err.println("An error occurred during symptom analysis: " + e.getMessage());
         }

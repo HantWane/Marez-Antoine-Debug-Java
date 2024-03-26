@@ -45,7 +45,7 @@ public class AnalyticsCounter {
      * @throws IOException If an I/O error occurs during reading symptoms.
      */
     public List<String> getSymptoms() throws IOException {
-        return reader.readSymptoms();
+        return reader.readCsvSymptoms(',');
     }
 
     /**

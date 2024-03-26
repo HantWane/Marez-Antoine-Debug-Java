@@ -1,5 +1,6 @@
 package com.hemebiotech.analytics;
 
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -24,9 +25,10 @@ public class WriteSymptomsDataToFile implements ISymptomWriter {
      */
     @Override
     public void writeSymptoms(Map<String, Integer> symptoms) {
-        try (FileWriter writer = new FileWriter(filepath)) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
             for (Map.Entry<String, Integer> entry : symptoms.entrySet()) {
-                writer.write(entry.getKey() + ": " + entry.getValue() + "\n");
+                writer.write(entry.getKey() + ":" + " " + entry.getValue());
+                writer.newLine(); // Ajoute une nouvelle ligne après chaque symptôme
             }
         } catch (IOException e) {
             System.err.println("Error writing symptoms to file: " + e.getMessage());
