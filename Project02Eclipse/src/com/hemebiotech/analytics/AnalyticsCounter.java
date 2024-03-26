@@ -52,12 +52,18 @@ public class AnalyticsCounter {
      * Method to count symptoms.
      * @param symptoms The list of symptoms to count.
      * @return A map containing symptoms and their counts.
+	 * @throws IllegalArgumentException If the list of symptoms is null.
      */
     public Map<String, Integer> countSymptoms(List<String> symptoms) {
+		if (symptoms == null) {
+            throw new IllegalArgumentException("La liste de symptômes ne peut pas être nulle");
+        }
         Map<String, Integer> symptomCounts = new HashMap<>();
 
         for (String symptom : symptoms) {
-            symptomCounts.put(symptom, symptomCounts.getOrDefault(symptom, 0) + 1);
+            // Normalizing the case of the symptom before counting
+        String normalizedSymptom = symptom.toLowerCase(); // or .toUpperCase() for upper case normalization
+        symptomCounts.put(normalizedSymptom, symptomCounts.getOrDefault(normalizedSymptom, 0) + 1);
         }
         return symptomCounts;
     }
